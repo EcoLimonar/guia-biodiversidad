@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Biodiversidad - El Limonar</title>
+    <!-- Librerías necesarias para que React funcione sin instalar nada -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-900">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Componente de icono simple para Lucide
+        const Icon = ({ name, className }) => {
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [name]);
+            return <i data-lucide={name} className={className}></i>;
+        };
+
+        const App = () => {
+            const animals = [
+                { id: 1, commonName: "Mono Aullador Rojo", scientificName: "Alouatta seniculus", category: "Primates", habitat: "Dosel de bosques tropicales", info: "Poseen un hueso hioides muy desarrollado que actúa como caja de resonancia para sus potentes aullidos.", icon: "skull", color: "bg-orange-700", image: "https://lh3.googleusercontent.com/d/1ZA0JsTaJUnbOplOdBqQKizEmGin1xMpH" },
+                { id: 2, commonName: "Mono Marteja", scientificName: "Aotus lemurinus", category: "Primates", habitat: "Bosques maduros, nocturnos", info: "Únicos monos nocturnos del mundo. Tienen ojos enormes para ver en la oscuridad.", icon: "skull", color: "bg-amber-900", image: "https://lh3.googleusercontent.com/d/1qoyIz0TLmrEo935n0VkqpLMpj2F-zcvs" },
+                { id: 3, commonName: "Tucán Pico Iris", scientificName: "Ramphastos sulfuratus", category: "Aves", habitat: "Tierras bajas y selva", info: "Su pico es extremadamente ligero y resistente, una maravilla de la ingeniería natural.", icon: "bird", color: "bg-emerald-600", image: "https://lh3.googleusercontent.com/d/1BmEOSSQ-GsXMAJYcZlmYZLmBA4cBp3uT" },
+                { id: 4, commonName: "Guacamaya Bandera", scientificName: "Ara macao", category: "Aves", habitat: "Selvas húmedas", info: "Viven hasta 60 años y mantienen la misma pareja durante toda su vida.", icon: "bird", color: "bg-red-600", image: "https://lh3.googleusercontent.com/d/18Am6EdZcpS7rluz1ce0mq1qupCCUxU9q" },
+                { id: 5, commonName: "Loro Cabeciazul", scientificName: "Pionus menstruus", category: "Aves", habitat: "Dosel de bosques tropicales", info: "Se distingue por su cuerpo verde brillante y su cabeza de un azul intenso. Es un ave muy sociable.", icon: "bird", color: "bg-blue-600", image: "https://lh3.googleusercontent.com/d/1g9k43mkqOIk1p1ZTE1aRhJxOM4yLd6Cb" },
+                { id: 6, commonName: "Guacamayo Severo", scientificName: "Ara severus", category: "Aves", habitat: "Bordes de selva", info: "Guacamayo mediano verde vibrante con parches rojos bajo las alas.", icon: "bird", color: "bg-green-700", image: "https://lh3.googleusercontent.com/d/1zVAV-JBPPlVGHBZSrPIfIUnrol3h0B5B" },
+                { id: 7, commonName: "Bobo Punteado", scientificName: "Hypnelus ruficollis", category: "Aves", habitat: "Bosques secos", info: "Conocido por quedarse inmóvil en perchas bajas acechando insectos.", icon: "bird", color: "bg-amber-600", image: "https://lh3.googleusercontent.com/d/1YRYcPBOE7yqwBPphBq52HLebrBwHLF1n" },
+                { id: 8, commonName: "Canario Criollo", scientificName: "Sicalis flaveola", category: "Aves", habitat: "Jardines", info: "Famoso por su canto melodioso y su plumaje amarillo vibrante.", icon: "bird", color: "bg-yellow-400", image: "https://lh3.googleusercontent.com/d/1Y8j_tWbvD3xTvsY3oyG8lHU0ruEJzgHj" },
+                { id: 9, commonName: "Carpintero Pechipunteado", scientificName: "Colaptes punctigula", category: "Aves", habitat: "Áreas abiertas con árboles", info: "Cara blanca y pecho punteado. Busca hormigas en los troncos.", icon: "bird", color: "bg-stone-700", image: "https://lh3.googleusercontent.com/d/1Gh640OI7EJG2C6yMmP0c6pQfv3enDxJm" },
+                { id: 10, commonName: "Mosquerito Silbón", scientificName: "Camptostoma obsoletum", category: "Aves", habitat: "Bordes de bosque", info: "Pequeño e inquieto. Su canto es un silbido descendente melancólico.", icon: "bird", color: "bg-stone-400", image: "https://lh3.googleusercontent.com/d/1d6V2JswnW46pZAn5CBjrHlAa5rTvoOAZ" },
+                { id: 11, commonName: "Garza Azul", scientificName: "Egretta caerulea", category: "Aves", habitat: "Humedales", info: "Adultos azul pizarra oscuro. Cazadora paciente.", icon: "bird", color: "bg-indigo-700", image: "https://lh3.googleusercontent.com/d/1fVsgu05agLC6lqLNg65_5o9SgfuzKO1n" },
+                { id: 12, commonName: "Carpintero Real", scientificName: "Campephilus melanoleucos", category: "Aves", habitat: "Bosques", info: "Cráneo con amortiguación natural para el martilleo.", icon: "bird", color: "bg-stone-600", image: "https://lh3.googleusercontent.com/d/1cMKnEtb6EsOHqsPVNM--43CIh1Y1iZf-" },
+                { id: 13, commonName: "Gavilán Cienaguero", scientificName: "Busarellus nigricollis", category: "Aves", habitat: "Cerca de agua", info: "Raptor especializado en peces. Plumaje canela inconfundible.", icon: "bird", color: "bg-yellow-700", image: "https://lh3.googleusercontent.com/d/13PsJypK4SHk8gJC-5TxtfcuAmSTpOOim" },
+                { id: 14, commonName: "Martín Pescador", scientificName: "Chloroceryle amazona", category: "Aves", habitat: "Ríos", info: "Cazador de precisión. Se zambulle a gran velocidad.", icon: "droplet", color: "bg-teal-700", image: "https://lh3.googleusercontent.com/d/1wqmzOh2RbD2n2f2IrjbK8cxi0h6lyFE9" },
+                { id: 15, commonName: "Gallito de Ciénaga", scientificName: "Porphyrio martinica", category: "Aves", habitat: "Pantanos", info: "Dedos largos para caminar sobre vegetación flotante.", icon: "droplet", color: "bg-indigo-600", image: "https://lh3.googleusercontent.com/d/1SF3aa9jKRknXXVlgB620gAr3ghpFO41D" },
+                { id: 16, commonName: "Garza Tigre", scientificName: "Tigrisoma lineatum", category: "Aves", habitat: "Bordes de ríos", info: "Garza solitaria con plumaje finamente rayado.", icon: "bird", color: "bg-amber-700", image: "https://lh3.googleusercontent.com/d/19oYVUkpV75cxjDEmEY743GgA-Vlhcm1X" },
+                { id: 17, commonName: "Garcita Estriada", scientificName: "Butorides striata", category: "Aves", habitat: "Quebradas", info: "Pequeña y cautelosa. Se queda agachada cerca del agua.", icon: "bird", color: "bg-stone-500", image: "https://lh3.googleusercontent.com/d/1UmR4z4LRZ5fP6xMp9A0G02JZGD_thhLs" },
+                { id: 18, commonName: "Monjita Cabeciamarilla", scientificName: "Chrysomus icterocephalus", category: "Aves", habitat: "Humedales", info: "El macho es negro con cabeza amarilla brillante.", icon: "bird", color: "bg-yellow-600", image: "https://lh3.googleusercontent.com/d/12zFl7hBOhOO4uAZSflgBzaQP6f5tRkv-" },
+                { id: 19, commonName: "Hornero", scientificName: "Furnarius rufus", category: "Aves", habitat: "Jardines", info: "Crea nidos de barro increíbles con forma de horno.", icon: "bird", color: "bg-orange-300", image: "https://lh3.googleusercontent.com/d/1HKGNhB055JBJ5H5n6nGHp88Yu_5Jzpee" },
+                { id: 20, commonName: "Oso Hormiguero", scientificName: "Tamandua tetradactyla", category: "Mamíferos", habitat: "Suelos y árboles", info: "No tiene dientes. Lengua larga para comer hormigas.", icon: "paw-print", color: "bg-amber-800", image: "https://lh3.googleusercontent.com/d/10ZDVYkH3mNZx_FIoCWTFEEH5YtiXWVFZ" },
+                { id: 21, commonName: "Ardilla de Cola Roja", scientificName: "Sciurus granatensis", category: "Mamíferos", habitat: "Jardines", info: "Almacena semillas bajo tierra ayudando a la regeneración.", icon: "paw-print", color: "bg-orange-900", image: "https://lh3.googleusercontent.com/d/1cyQq43aizGJPcQ8s_KT6lP40nhbfGyPK" },
+                { id: 22, commonName: "Iguana Verde", scientificName: "Iguana iguana", category: "Reptiles", habitat: "Cerca de agua", info: "Gran trepadora y nadadora.", icon: "zap", color: "bg-lime-700", image: "https://lh3.googleusercontent.com/d/1Q8E7PFNt8FQkuqlXHp_Jr8YnymLdiBK4" },
+                { id: 23, commonName: "Lagarto Overo", scientificName: "Tupinambis teguixin", category: "Reptiles", habitat: "Suelos", info: "Omnívoro y robusto. Patrón de escamas blancas y negras.", icon: "zap", color: "bg-zinc-800", image: "https://lh3.googleusercontent.com/d/1nZLlu7X8JR6cmzVt89Z5H4ySHoDsFc4F" },
+                { id: 24, commonName: "Tortuga Hicotea", scientificName: "Trachemys callirostris", category: "Reptiles", habitat: "Estanques", info: "Tortuga semiacuática sensible a la contaminación.", icon: "zap", color: "bg-emerald-900", image: "https://lh3.googleusercontent.com/d/1Xq1K3APozzgBjCz-cV-rmup5rjMqqAfM" },
+                { id: 25, commonName: "Tortuga Morrocoy", scientificName: "Chelonoidis carbonarius", category: "Reptiles", habitat: "Bosque seco", info: "Longeva. Patas con escamas rojas muy vistosas.", icon: "zap", color: "bg-orange-900", image: "https://lh3.googleusercontent.com/d/1UuGunzSRgT_zWhv4IHB7127Xsq91EKeW" },
+                { id: 26, commonName: "Ranita de Lluvia", scientificName: "Pristimantis sp.", category: "Anfibios", habitat: "Hojarasca", info: "Nacen directamente como ranitas del huevo.", icon: "droplet", color: "bg-lime-600", image: "https://lh3.googleusercontent.com/d/1rtEh_QSEMCEHwx_YU0opmUDiLtgcc3jJ" },
+                { id: 27, commonName: "Rana de Cristal", scientificName: "Nymphargus griffithsi", category: "Anfibios", habitat: "Bordes de agua", info: "Piel transparente. Se puede ver su interior.", icon: "droplet", color: "bg-emerald-400", image: "https://lh3.googleusercontent.com/d/1OYrdh2RnWE2X5wGhYZhr1YX9CYP0gP1X" },
+                { id: 28, commonName: "Mariposa Monarca", scientificName: "Danaus plexippus", category: "Insectos", habitat: "Jardines", info: "Migradora incansable. Colores de advertencia.", icon: "sparkles", color: "bg-orange-500", image: "https://lh3.googleusercontent.com/d/1dQQiwctr_DZkEAZ0wWhYm44cqGrJ2HUv" },
+                { id: 29, commonName: "Mariposa Amarilla", scientificName: "Phoebis sennae", category: "Insectos", habitat: "Flores", info: "Vuelo rápido y color limón.", icon: "sparkles", color: "bg-yellow-500", image: "https://lh3.googleusercontent.com/d/1ZI37v5J0HuWZ_detOWBB_e2o4xBY5TQ0" },
+                { id: 30, commonName: "Mariposa Malaquita", scientificName: "Siproeta stelenes", category: "Insectos", habitat: "Sombras del bosque", info: "Alas verde malaquita traslúcido.", icon: "sparkles", color: "bg-lime-500", image: "https://lh3.googleusercontent.com/d/1EXwtFxf8V2XgO8csJAQnyl6W74PX_YOp" }
+            ];
+
+            const [filter, setFilter] = useState('Todos');
+            const [selectedAnimal, setSelectedAnimal] = useState(null);
+
+            const filteredAnimals = filter === 'Todos' ? animals : animals.filter(a => a.category === filter);
+
+            return (
+                <div className="min-h-screen pb-20">
+                    <header className="h-96 bg-emerald-900 flex flex-col items-center justify-center text-white p-8 text-center relative overflow-hidden">
+                        <div className="absolute inset-0 opacity-20 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1544947950-fa07a98d2ad7?auto=format&fit=crop')"}}></div>
+                        <div className="relative z-10 flex flex-col items-center">
+                            <img src="https://lh3.googleusercontent.com/d/1LNTkboFIGhJdPeAVw-08ffqZQP3cqIHm" alt="Logo" className="h-40 md:h-56 w-auto object-contain drop-shadow-2xl mb-4" />
+                            <p className="text-emerald-100 italic tracking-[0.3em] uppercase text-xs font-bold opacity-90">Explora la Biodiversidad</p>
+                        </div>
+                    </header>
+
+                    <nav className="max-w-5xl mx-auto p-8 flex justify-center gap-3 flex-wrap">
+                        {["Todos", "Primates", "Aves", "Mamíferos", "Reptiles", "Anfibios", "Insectos"].map(cat => (
+                            <button key={cat} onClick={() => setFilter(cat)} className={`px-8 py-2 rounded-2xl text-[10px] font-black uppercase transition-all border-2 ${filter === cat ? 'bg-emerald-800 border-emerald-800 text-white shadow-lg' : 'bg-white border-stone-100 text-stone-400'}`}>{cat}</button>
+                        ))}
+                    </nav>
+
+                    <main className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                        {filteredAnimals.map(animal => (
+                            <div key={animal.id} className="bg-white rounded-[3rem] shadow-sm border border-stone-100 overflow-hidden hover:shadow-2xl transition-all group flex flex-col relative">
+                                <div className="aspect-[4/3] overflow-hidden relative bg-stone-100">
+                                    <img src={animal.image} alt={animal.commonName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" />
+                                    <div className={`absolute top-6 left-6 ${animal.color} text-white text-[9px] font-black px-4 py-1.5 rounded-xl uppercase tracking-widest shadow-lg`}>{animal.category}</div>
+                                </div>
+                                <div className="p-10 flex-1 flex flex-col">
+                                    <div className="p-4 bg-stone-50 w-fit rounded-2xl text-stone-300 group-hover:text-emerald-500 transition-colors mb-6"><Icon name={animal.icon} className="w-5 h-5" /></div>
+                                    <h3 className="text-2xl font-black text-stone-800 leading-tight mb-1">{animal.commonName}</h3>
+                                    <p className="text-sm italic text-emerald-700/50 mb-8 font-serif">{animal.scientificName}</p>
+                                    <button onClick={() => setSelectedAnimal(animal)} className="mt-auto w-full py-5 bg-stone-900 text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-emerald-800 shadow-lg">Ver Detalles ✨</button>
+                                </div>
+                            </div>
+                        ))}
+                    </main>
+
+                    {selectedAnimal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-xl p-4">
+                            <div className="bg-white w-full max-w-4xl rounded-[4rem] overflow-hidden flex flex-col md:flex-row shadow-2xl relative max-h-[90vh]">
+                                <button onClick={() => setSelectedAnimal(null)} className="absolute top-8 right-8 z-30 bg-white/20 hover:bg-white text-stone-800 p-3 rounded-full transition-all shadow-lg"><Icon name="x" className="w-6 h-6" /></button>
+                                <div className="w-full md:w-1/2 h-72 md:h-auto bg-stone-100 flex items-center justify-center">
+                                    <img src={selectedAnimal.image} className="w-full h-full object-cover" alt={selectedAnimal.commonName} />
+                                </div>
+                                <div className="p-12 md:w-1/2 overflow-y-auto bg-white flex flex-col">
+                                    <span className="text-emerald-600 font-black text-[10px] uppercase tracking-widest mb-4 block">Ficha Natural</span>
+                                    <h2 className="text-5xl font-black text-stone-900 mb-2 leading-none">{selectedAnimal.commonName}</h2>
+                                    <p className="text-xl italic text-stone-400 font-serif mb-10">{selectedAnimal.scientificName}</p>
+                                    <div className="bg-stone-50 p-8 rounded-[2.5rem] border border-stone-100 mb-8">
+                                        <p className="text-stone-700 leading-relaxed font-medium italic">"{selectedAnimal.info}"</p>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-stone-400 font-black text-[10px] uppercase tracking-widest"><Icon name="map-pin" className="w-5 h-5 text-emerald-500" /> {selectedAnimal.habitat}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
