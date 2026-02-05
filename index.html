@@ -1,5 +1,4 @@
-
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -15,6 +14,10 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Animación suave para cuando cargan las fotos */
+        .fade-in-img { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body class="bg-stone-50 text-stone-900">
@@ -30,37 +33,40 @@
         };
 
         const App = () => {
+            // Función para generar link de imagen ultra-compatible con móviles
+            const getImg = (id) => `https://drive.google.com/thumbnail?id=${id}&sz=w1000&t=${Date.now()}`;
+
             const animals = [
-                { id: 1, commonName: "Mono Aullador Rojo", scientificName: "Alouatta seniculus", category: "Primates", habitat: "Dosel de bosques tropicales", info: "Poseen un hueso hioides muy desarrollado que actúa como caja de resonancia para sus potentes aullidos.", icon: "skull", color: "bg-orange-700", image: "https://lh3.googleusercontent.com/d/1ZA0JsTaJUnbOplOdBqQKizEmGin1xMpH" },
-                { id: 2, commonName: "Mono Marteja", scientificName: "Aotus lemurinus", category: "Primates", habitat: "Bosques maduros, nocturnos", info: "Únicos monos nocturnos del mundo. Tienen ojos enormes para ver en la oscuridad.", icon: "skull", color: "bg-amber-900", image: "https://lh3.googleusercontent.com/d/1qoyIz0TLmrEo935n0VkqpLMpj2F-zcvs" },
-                { id: 3, commonName: "Tucán Pico Iris", scientificName: "Ramphastos sulfuratus", category: "Aves", habitat: "Tierras bajas y selva", info: "Su pico es extremadamente ligero y resistente, una maravilla de la ingeniería natural.", icon: "bird", color: "bg-emerald-600", image: "https://lh3.googleusercontent.com/d/1BmEOSSQ-GsXMAJYcZlmYZLmBA4cBp3uT" },
-                { id: 4, commonName: "Guacamaya Bandera", scientificName: "Ara macao", category: "Aves", habitat: "Selvas húmedas", info: "Viven hasta 60 años y mantienen la misma pareja durante toda su vida.", icon: "bird", color: "bg-red-600", image: "https://lh3.googleusercontent.com/d/18Am6EdZcpS7rluz1ce0mq1qupCCUxU9q" },
-                { id: 5, commonName: "Loro Cabeciazul", scientificName: "Pionus menstruus", category: "Aves", habitat: "Dosel de bosques tropicales", info: "Se distingue por su cuerpo verde brillante y su cabeza de un azul intenso.", icon: "bird", color: "bg-blue-600", image: "https://lh3.googleusercontent.com/d/1g9k43mkqOIk1p1ZTE1aRhJxOM4yLd6Cb" },
-                { id: 6, commonName: "Guacamayo Severo", scientificName: "Ara severus", category: "Aves", habitat: "Bordes de selva", info: "Guacamayo mediano verde vibrante con parches rojos bajo las alas.", icon: "bird", color: "bg-green-700", image: "https://lh3.googleusercontent.com/d/1zVAV-JBPPlVGHBZSrPIfIUnrol3h0B5B" },
-                { id: 7, commonName: "Bobo Punteado", scientificName: "Hypnelus ruficollis", category: "Aves", habitat: "Bosques secos", info: "Conocido por quedarse inmóvil en perchas bajas acechando insectos.", icon: "bird", color: "bg-amber-600", image: "https://lh3.googleusercontent.com/d/1YRYcPBOE7yqwBPphBq52HLebrBwHLF1n" },
-                { id: 8, commonName: "Canario Criollo", scientificName: "Sicalis flaveola", category: "Aves", habitat: "Jardines", info: "Famoso por su canto melodioso y su plumaje amarillo vibrante.", icon: "bird", color: "bg-yellow-400", image: "https://lh3.googleusercontent.com/d/1Y8j_tWbvD3xTvsY3oyG8lHU0ruEJzgHj" },
-                { id: 9, commonName: "Carpintero Pechipunteado", scientificName: "Colaptes punctigula", category: "Aves", habitat: "Áreas abiertas", info: "Cara blanca y pecho punteado. Busca hormigas en los troncos.", icon: "bird", color: "bg-stone-700", image: "https://lh3.googleusercontent.com/d/1Gh640OI7EJG2C6yMmP0c6pQfv3enDxJm" },
-                { id: 10, commonName: "Mosquerito Silbón", scientificName: "Camptostoma obsoletum", category: "Aves", habitat: "Bordes de bosque", info: "Pequeño e inquieto. Su canto es un silbido descendente melancólico.", icon: "bird", color: "bg-stone-400", image: "https://lh3.googleusercontent.com/d/1d6V2JswnW46pZAn5CBjrHlAa5rTvoOAZ" },
-                { id: 11, commonName: "Garza Azul", scientificName: "Egretta caerulea", category: "Aves", habitat: "Humedales", info: "Adultos azul pizarra oscuro. Cazadora paciente.", icon: "bird", color: "bg-indigo-700", image: "https://lh3.googleusercontent.com/d/1fVsgu05agLC6lqLNg65_5o9SgfuzKO1n" },
-                { id: 12, commonName: "Carpintero Real", scientificName: "Campephilus melanoleucos", category: "Aves", habitat: "Bosques", info: "Cráneo con amortiguación natural para el martilleo constante.", icon: "bird", color: "bg-stone-600", image: "https://lh3.googleusercontent.com/d/1cMKnEtb6EsOHqsPVNM--43CIh1Y1iZf-" },
-                { id: 13, commonName: "Gavilán Cienaguero", scientificName: "Busarellus nigricollis", category: "Aves", habitat: "Cerca de agua", info: "Raptor especializado en peces. Plumaje canela inconfundible.", icon: "bird", color: "bg-yellow-700", image: "https://lh3.googleusercontent.com/d/13PsJypK4SHk8gJC-5TxtfcuAmSTpOOim" },
-                { id: 14, commonName: "Martín Pescador", scientificName: "Chloroceryle amazona", category: "Aves", habitat: "Ríos", info: "Cazador de precisión. Se zambulle a gran velocidad.", icon: "droplet", color: "bg-teal-700", image: "https://lh3.googleusercontent.com/d/1wqmzOh2RbD2n2f2IrjbK8cxi0h6lyFE9" },
-                { id: 15, commonName: "Gallito de Ciénaga", scientificName: "Porphyrio martinica", category: "Aves", habitat: "Pantanos", info: "Dedos largos para caminar sobre vegetación flotante.", icon: "droplet", color: "bg-indigo-600", image: "https://lh3.googleusercontent.com/d/1SF3aa9jKRknXXVlgB620gAr3ghpFO41D" },
-                { id: 16, commonName: "Garza Tigre", scientificName: "Tigrisoma lineatum", category: "Aves", habitat: "Bordes de ríos", info: "Garza solitaria con plumaje finamente rayado.", icon: "bird", color: "bg-amber-700", image: "https://lh3.googleusercontent.com/d/19oYVUkpV75cxjDEmEY743GgA-Vlhcm1X" },
-                { id: 17, commonName: "Garcita Estriada", scientificName: "Butorides striata", category: "Aves", habitat: "Quebradas", info: "Pequeña y cautelosa. Se queda agachada cerca del agua.", icon: "bird", color: "bg-stone-500", image: "https://lh3.googleusercontent.com/d/1UmR4z4LRZ5fP6xMp9A0G02JZGD_thhLs" },
-                { id: 18, commonName: "Monjita Cabeciamarilla", scientificName: "Chrysomus icterocephalus", category: "Aves", habitat: "Humedales", info: "El macho es negro con cabeza amarilla brillante.", icon: "bird", color: "bg-yellow-600", image: "https://lh3.googleusercontent.com/d/12zFl7hBOhOO4uAZSflgBzaQP6f5tRkv-" },
-                { id: 19, commonName: "Hornero", scientificName: "Furnarius rufus", category: "Aves", habitat: "Jardines", info: "Crea nidos de barro increíbles con forma de horno.", icon: "bird", color: "bg-orange-300", image: "https://lh3.googleusercontent.com/d/1HKGNhB055JBJ5H5n6nGHp88Yu_5Jzpee" },
-                { id: 20, commonName: "Oso Hormiguero", scientificName: "Tamandua tetradactyla", category: "Mamíferos", habitat: "Suelos y árboles", info: "No tiene dientes. Lengua larga para comer hormigas.", icon: "paw-print", color: "bg-amber-800", image: "https://lh3.googleusercontent.com/d/10ZDVYkH3mNZx_FIoCWTFEEH5YtiXWVFZ" },
-                { id: 21, commonName: "Ardilla de Cola Roja", scientificName: "Sciurus granatensis", category: "Mamíferos", habitat: "Jardines", info: "Almacena semillas bajo tierra ayudando a la regeneración.", icon: "paw-print", color: "bg-orange-900", image: "https://lh3.googleusercontent.com/d/1cyQq43aizGJPcQ8s_KT6lP40nhbfGyPK" },
-                { id: 22, commonName: "Iguana Verde", scientificName: "Iguana iguana", category: "Reptiles", habitat: "Cerca de agua", info: "Gran trepadora y nadadora.", icon: "zap", color: "bg-lime-700", image: "https://lh3.googleusercontent.com/d/1Q8E7PFNt8FQkuqlXHp_Jr8YnymLdiBK4" },
-                { id: 23, commonName: "Lagarto Overo", scientificName: "Tupinambis teguixin", category: "Reptiles", habitat: "Suelos", info: "Omnívoro y robusto. Patrón de escamas blancas y negras.", icon: "zap", color: "bg-zinc-800", image: "https://lh3.googleusercontent.com/d/1nZLlu7X8JR6cmzVt89Z5H4ySHoDsFc4F" },
-                { id: 24, commonName: "Tortuga Hicotea", scientificName: "Trachemys callirostris", category: "Reptiles", habitat: "Estanques", info: "Tortuga semiacuática sensible a la contaminación.", icon: "zap", color: "bg-emerald-900", image: "https://lh3.googleusercontent.com/d/1Xq1K3APozzgBjCz-cV-rmup5rjMqqAfM" },
-                { id: 25, commonName: "Tortuga Morrocoy", scientificName: "Chelonoidis carbonarius", category: "Reptiles", habitat: "Bosque seco", info: "Longeva. Patas con escamas rojas muy vistosas.", icon: "zap", color: "bg-orange-900", image: "https://lh3.googleusercontent.com/d/1UuGunzSRgT_zWhv4IHB7127Xsq91EKeW" },
-                { id: 26, commonName: "Ranita de Lluvia", scientificName: "Pristimantis sp.", category: "Anfibios", habitat: "Hojarasca", info: "Nacen directamente como ranitas del huevo.", icon: "droplet", color: "bg-lime-600", image: "https://lh3.googleusercontent.com/d/1rtEh_QSEMCEHwx_YU0opmUDiLtgcc3jJ" },
-                { id: 27, commonName: "Rana de Cristal", scientificName: "Nymphargus griffithsi", category: "Anfibios", habitat: "Bordes de agua", info: "Piel transparente. Se puede ver su interior.", icon: "droplet", color: "bg-emerald-400", image: "https://lh3.googleusercontent.com/d/1OYrdh2RnWE2X5wGhYZhr1YX9CYP0gP1X" },
-                { id: 28, commonName: "Mariposa Monarca", scientificName: "Danaus plexippus", category: "Insectos", habitat: "Jardines", info: "Migradora incansable. Colores de advertencia.", icon: "sparkles", color: "bg-orange-500", image: "https://lh3.googleusercontent.com/d/1dQQiwctr_DZkEAZ0wWhYm44cqGrJ2HUv" },
-                { id: 29, commonName: "Mariposa Amarilla", scientificName: "Phoebis sennae", category: "Insectos", habitat: "Flores", info: "Vuelo rápido y color limón.", icon: "sparkles", color: "bg-yellow-500", image: "https://lh3.googleusercontent.com/d/1ZI37v5J0HuWZ_detOWBB_e2o4xBY5TQ0" },
-                { id: 30, commonName: "Mariposa Malaquita", scientificName: "Siproeta stelenes", category: "Insectos", habitat: "Sombras del bosque", info: "Alas verde malaquita traslúcido.", icon: "sparkles", color: "bg-lime-500", image: "https://lh3.googleusercontent.com/d/1EXwtFxf8V2XgO8csJAQnyl6W74PX_YOp" }
+                { id: 1, commonName: "Mono Aullador Rojo", scientificName: "Alouatta seniculus", category: "Primates", habitat: "Dosel de bosques tropicales", info: "Poseen un hueso hioides muy desarrollado que actúa como caja de resonancia para sus potentes aullidos.", icon: "skull", color: "bg-orange-700", image: getImg("1ZA0JsTaJUnbOplOdBqQKizEmGin1xMpH") },
+                { id: 2, commonName: "Mono Marteja", scientificName: "Aotus lemurinus", category: "Primates", habitat: "Bosques maduros, nocturnos", info: "Únicos monos nocturnos del mundo. Tienen ojos enormes para ver en la oscuridad.", icon: "skull", color: "bg-amber-900", image: getImg("1qoyIz0TLmrEo935n0VkqpLMpj2F-zcvs") },
+                { id: 3, commonName: "Tucán Pico Iris", scientificName: "Ramphastos sulfuratus", category: "Aves", habitat: "Tierras bajas y selva", info: "Su pico es extremadamente ligero y resistente, una maravilla de la ingeniería natural.", icon: "bird", color: "bg-emerald-600", image: getImg("1BmEOSSQ-GsXMAJYcZlmYZLmBA4cBp3uT") },
+                { id: 4, commonName: "Guacamaya Bandera", scientificName: "Ara macao", category: "Aves", habitat: "Selvas húmedas", info: "Viven hasta 60 años y mantienen la misma pareja durante toda su vida.", icon: "bird", color: "bg-red-600", image: getImg("18Am6EdZcpS7rluz1ce0mq1qupCCUxU9q") },
+                { id: 5, commonName: "Loro Cabeciazul", scientificName: "Pionus menstruus", category: "Aves", habitat: "Dosel de bosques tropicales", info: "Se distingue por su cuerpo verde brillante y su cabeza de un azul intenso.", icon: "bird", color: "bg-blue-600", image: getImg("1g9k43mkqOIk1p1ZTE1aRhJxOM4yLd6Cb") },
+                { id: 6, commonName: "Guacamayo Severo", scientificName: "Ara severus", category: "Aves", habitat: "Bordes de selva", info: "Guacamayo mediano verde vibrante con parches rojos bajo las alas.", icon: "bird", color: "bg-green-700", image: getImg("1zVAV-JBPPlVGHBZSrPIfIUnrol3h0B5B") },
+                { id: 7, commonName: "Bobo Punteado", scientificName: "Hypnelus ruficollis", category: "Aves", habitat: "Bosques secos", info: "Conocido por quedarse inmóvil en perchas bajas acechando insectos.", icon: "bird", color: "bg-amber-600", image: getImg("1YRYcPBOE7yqwBPphBq52HLebrBwHLF1n") },
+                { id: 8, commonName: "Canario Criollo", scientificName: "Sicalis flaveola", category: "Aves", habitat: "Jardines", info: "Famoso por su canto melodioso y su plumaje amarillo vibrante.", icon: "bird", color: "bg-yellow-400", image: getImg("1Y8j_tWbvD3xTvsY3oyG8lHU0ruEJzgHj") },
+                { id: 9, commonName: "Carpintero Pechipunteado", scientificName: "Colaptes punctigula", category: "Aves", habitat: "Áreas abiertas", info: "Cara blanca y pecho punteado. Busca hormigas en los troncos.", icon: "bird", color: "bg-stone-700", image: getImg("1Gh640OI7EJG2C6yMmP0c6pQfv3enDxJm") },
+                { id: 10, commonName: "Mosquerito Silbón", scientificName: "Camptostoma obsoletum", category: "Aves", habitat: "Bordes de bosque", info: "Pequeño e inquieto. Su canto es un silbido descendente melancólico.", icon: "bird", color: "bg-stone-400", image: getImg("1d6V2JswnW46pZAn5CBjrHlAa5rTvoOAZ") },
+                { id: 11, commonName: "Garza Azul", scientificName: "Egretta caerulea", category: "Aves", habitat: "Humedales", info: "Adultos azul pizarra oscuro. Cazadora paciente.", icon: "bird", color: "bg-indigo-700", image: getImg("1fVsgu05agLC6lqLNg65_5o9SgfuzKO1n") },
+                { id: 12, commonName: "Carpintero Real", scientificName: "Campephilus melanoleucos", category: "Aves", habitat: "Bosques", info: "Cráneo con amortiguación natural para el martilleo constante.", icon: "bird", color: "bg-stone-600", image: getImg("1cMKnEtb6EsOHqsPVNM--43CIh1Y1iZf-") },
+                { id: 13, commonName: "Gavilán Cienaguero", scientificName: "Busarellus nigricollis", category: "Aves", habitat: "Cerca de agua", info: "Raptor especializado en peces. Plumaje canela inconfundible.", icon: "bird", color: "bg-yellow-700", image: getImg("13PsJypK4SHk8gJC-5TxtfcuAmSTpOOim") },
+                { id: 14, commonName: "Martín Pescador", scientificName: "Chloroceryle amazona", category: "Aves", habitat: "Ríos", info: "Cazador de precisión. Se zambulle a gran velocidad.", icon: "droplet", color: "bg-teal-700", image: getImg("1wqmzOh2RbD2n2f2IrjbK8cxi0h6lyFE9") },
+                { id: 15, commonName: "Gallito de Ciénaga", scientificName: "Porphyrio martinica", category: "Aves", habitat: "Pantanos", info: "Dedos largos para caminar sobre vegetación flotante.", icon: "droplet", color: "bg-indigo-600", image: getImg("1SF3aa9jKRknXXVlgB620gAr3ghpFO41D") },
+                { id: 16, commonName: "Garza Tigre", scientificName: "Tigrisoma lineatum", category: "Aves", habitat: "Bordes de ríos", info: "Garza solitaria con plumaje finamente rayado.", icon: "bird", color: "bg-amber-700", image: getImg("19oYVUkpV75cxjDEmEY743GgA-Vlhcm1X") },
+                { id: 17, commonName: "Garcita Estriada", scientificName: "Butorides striata", category: "Aves", habitat: "Quebradas", info: "Pequeña y cautelosa. Se queda agachada cerca del agua.", icon: "bird", color: "bg-stone-500", image: getImg("1UmR4z4LRZ5fP6xMp9A0G02JZGD_thhLs") },
+                { id: 18, commonName: "Monjita Cabeciamarilla", scientificName: "Chrysomus icterocephalus", category: "Aves", habitat: "Humedales", info: "El macho es negro con cabeza amarilla brillante.", icon: "bird", color: "bg-yellow-600", image: getImg("12zFl7hBOhOO4uAZSflgBzaQP6f5tRkv-") },
+                { id: 19, commonName: "Hornero", scientificName: "Furnarius rufus", category: "Aves", habitat: "Jardines", info: "Crea nidos de barro increíbles con forma de horno.", icon: "bird", color: "bg-orange-300", image: getImg("1HKGNhB055JBJ5H5n6nGHp88Yu_5Jzpee") },
+                { id: 20, commonName: "Oso Hormiguero", scientificName: "Tamandua tetradactyla", category: "Mamíferos", habitat: "Suelos y árboles", info: "No tiene dientes. Lengua larga para comer hormigas.", icon: "paw-print", color: "bg-amber-800", image: getImg("10ZDVYkH3mNZx_FIoCWTFEEH5YtiXWVFZ") },
+                { id: 21, commonName: "Ardilla de Cola Roja", scientificName: "Sciurus granatensis", category: "Mamíferos", habitat: "Jardines", info: "Almacena semillas bajo tierra ayudando a la regeneración.", icon: "paw-print", color: "bg-orange-900", image: getImg("1cyQq43aizGJPcQ8s_KT6lP40nhbfGyPK") },
+                { id: 22, commonName: "Iguana Verde", scientificName: "Iguana iguana", category: "Reptiles", habitat: "Cerca de agua", info: "Gran trepadora y nadadora.", icon: "zap", color: "bg-lime-700", image: getImg("1Q8E7PFNt8FQkuqlXHp_Jr8YnymLdiBK4") },
+                { id: 23, commonName: "Lagarto Overo", scientificName: "Tupinambis teguixin", category: "Reptiles", habitat: "Suelos", info: "Omnívoro y robusto. Patrón de escamas blancas y negras.", icon: "zap", color: "bg-zinc-800", image: getImg("1nZLlu7X8JR6cmzVt89Z5H4ySHoDsFc4F") },
+                { id: 24, commonName: "Tortuga Hicotea", scientificName: "Trachemys callirostris", category: "Reptiles", habitat: "Estanques", info: "Tortuga semiacuática sensible a la contaminación.", icon: "zap", color: "bg-emerald-900", image: getImg("1Xq1K3APozzgBjCz-cV-rmup5rjMqqAfM") },
+                { id: 25, commonName: "Tortuga Morrocoy", scientificName: "Chelonoidis carbonarius", category: "Reptiles", habitat: "Bosque seco", info: "Longeva. Patas con escamas rojas muy vistosas.", icon: "zap", color: "bg-orange-900", image: getImg("1UuGunzSRgT_zWhv4IHB7127Xsq91EKeW") },
+                { id: 26, commonName: "Ranita de Lluvia", scientificName: "Pristimantis sp.", category: "Anfibios", habitat: "Hojarasca", info: "Nacen directamente como ranitas del huevo.", icon: "droplet", color: "bg-lime-600", image: getImg("1rtEh_QSEMCEHwx_YU0opmUDiLtgcc3jJ") },
+                { id: 27, commonName: "Rana de Cristal", scientificName: "Nymphargus griffithsi", category: "Anfibios", habitat: "Bordes de agua", info: "Piel transparente. Se puede ver su interior.", icon: "droplet", color: "bg-emerald-400", image: getImg("1OYrdh2RnWE2X5wGhYZhr1YX9CYP0gP1X") },
+                { id: 28, commonName: "Mariposa Monarca", scientificName: "Danaus plexippus", category: "Insectos", habitat: "Jardines", info: "Migradora incansable. Colores de advertencia.", icon: "sparkles", color: "bg-orange-500", image: getImg("1dQQiwctr_DZkEAZ0wWhYm44cqGrJ2HUv") },
+                { id: 29, commonName: "Mariposa Amarilla", scientificName: "Phoebis sennae", category: "Insectos", habitat: "Flores", info: "Vuelo rápido y color limón.", icon: "sparkles", color: "bg-yellow-500", image: getImg("1ZI37v5J0HuWZ_detOWBB_e2o4xBY5TQ0") },
+                { id: 30, commonName: "Mariposa Malaquita", scientificName: "Siproeta stelenes", category: "Insectos", habitat: "Sombras del bosque", info: "Alas verde malaquita traslúcido.", icon: "sparkles", color: "bg-lime-500", image: getImg("1EXwtFxf8V2XgO8csJAQnyl6W74PX_YOp") }
             ];
 
             const [filter, setFilter] = useState('Todos');
@@ -69,7 +75,9 @@
             const filteredAnimals = filter === 'Todos' ? animals : animals.filter(a => a.category === filter);
 
             const handleImageError = (e) => {
-                e.target.src = "https://images.unsplash.com/photo-1544947950-fa07a98d2ad7?auto=format&fit=crop&q=80";
+                // Si la imagen de Google falla, ponemos una de respaldo elegante de Unsplash
+                e.target.src = "https://images.unsplash.com/photo-1544947950-fa07a98d2ad7?auto=format&fit=crop&q=80&w=1000";
+                e.target.onerror = null; // Evitar bucles infinitos
             };
 
             return (
@@ -97,7 +105,8 @@
                                         alt={animal.commonName} 
                                         referrerpolicy="no-referrer"
                                         onError={handleImageError}
-                                        className="w-full h-full object-cover" 
+                                        loading="lazy"
+                                        className="w-full h-full object-cover fade-in-img" 
                                     />
                                     <div className={`absolute top-4 left-4 ${animal.color} text-white text-[8px] font-black px-3 py-1 rounded-lg uppercase tracking-widest`}>{animal.category}</div>
                                 </div>
@@ -117,7 +126,7 @@
                                 <div className="w-full md:w-1/2 h-64 md:h-auto bg-stone-200">
                                     <img 
                                         src={selectedAnimal.image} 
-                                        className="w-full h-full object-cover" 
+                                        className="w-full h-full object-cover fade-in-img" 
                                         alt={selectedAnimal.commonName} 
                                         referrerpolicy="no-referrer"
                                         onError={handleImageError}
